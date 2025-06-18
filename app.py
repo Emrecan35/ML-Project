@@ -65,13 +65,7 @@ def main():
         prediction = model.predict(input_scaled)
         if st.button("Tahmin Et"):
     prediction = model.predict(input_scaled)
-    prob = model.predict_proba(input_scaled)[0][1]
-    
-    st.write("💡 İçilebilir olasılığı:", prob)
-    st.write("Ölçeklenmiş Girdi:", input_scaled)
-    st.write("Model Özellikleri:", model.feature_names_)
-    st.write("Input Özellikleri:", input_df.columns.tolist())
-    
+
     ...
 
         # ✅ Olasılık tahmini burada:
