@@ -43,8 +43,6 @@ def get_user_input():
         "Trihalomethanes": trihalomethanes,
         "Turbidity": turbidity
     }
- if ph < 6.0 or ph > 8.5:
-    st.warning("⚠️ pH değeri 6.5–8.5 arasında olmalıdır. Bu değer insan sağlığı için önerilmez.")
     input_df = pd.DataFrame([data])
     return input_df
 
