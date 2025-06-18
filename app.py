@@ -31,6 +31,9 @@ def get_user_input():
     organic_carbon = st.sidebar.slider("Organic Carbon", 0.0, 20.0, 5.0, step=0.1)
     trihalomethanes = st.sidebar.slider("Trihalomethanes", 0.0, 150.0, 40.0, step=0.1)
     turbidity = st.sidebar.slider("Turbidity", 0.0, 15.0, 3.0, step=0.1)
+    
+    prob = model.predict_proba(input_scaled)[0][1]
+    st.write(f"İçilebilir olasılığı: {prob:.3f}")
 
     data = {
         "ph": ph,
