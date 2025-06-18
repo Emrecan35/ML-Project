@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import joblib
 import numpy as np
-
+defaults = joblib.load("impute_defaults.pkl")
 # Dosya yolları
 MODEL_PATH = "catboost_model.pkl"
 SCALER_PATH = "scaler.pkl"
@@ -12,7 +12,7 @@ st.set_page_config(
     page_icon="💧",
     layout="wide"
 )
-
+input_df.fillna(defaults, inplace=True)
 @st.cache_resource
 def load_model_and_scaler():
     model = joblib.load(MODEL_PATH)
@@ -59,7 +59,7 @@ def main():
    
     # Ölçekleme ve tahmin işlemi
     input_scaled = scaler.transform(input_df)
-
+    
     if st.button("Tahmin Et"):
         prediction = model.predict(input_scaled)
         result = "İÇİLEBİLİR SU 💧" if prediction[0] == 1 else "İÇİLEMEZ SU ❌"
