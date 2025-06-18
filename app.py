@@ -8,7 +8,7 @@ MODEL_PATH = "catboost_model.pkl"
 SCALER_PATH = "scaler.pkl"
 DEFAULTS_PATH = "impute_defaults.pkl"
 
-st.set_page_config(page_title="Water Potability Prediction", page_icon="💧", layout="wide")
+st.set_page_config(page_title="EmrecanML", page_icon="💧", layout="wide")
 
 @st.cache_resource
 def load_resources():
@@ -53,7 +53,7 @@ def get_user_input(defaults):
     return input_df
 
 def main():
-    st.title("💧 Water Potability Prediction App")
+    st.title("💧Su Kalitesi Tahmin Uygulaması")
     st.write("CatBoost model kullanılarak su içilebilirliği tahmini yapılmaktadır.")
 
     # Model, scaler ve default değerler yükleniyor
