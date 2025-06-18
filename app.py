@@ -3,7 +3,7 @@ import numpy as np
 import joblib
 
 # Load model and scaler
-model = joblib.load("best_catboost_model.pkl")
+model = joblib.load("catboost_model.pkl")
 scaler = joblib.load("scaler.pkl")
 
 st.set_page_config(page_title="Water Potability Prediction", layout="centered")
