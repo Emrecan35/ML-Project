@@ -1,4 +1,4 @@
-import streamlit as st
+ import streamlit as st
 import pandas as pd
 import joblib
 import numpy as np
@@ -63,14 +63,11 @@ def main():
 
     if st.button("Tahmin Et"):
         prediction = model.predict(input_scaled)
-
-    # ✅ Olasılık tahmini burada:
         prob = model.predict_proba(input_scaled)[0][1]
         st.write(f"💡 İçilebilir olasılığı: {prob:.3f}")
+        result = "İÇİLEBİLİR SU 💧" if prediction[0] == 1 else "İÇİLEMEZ SU ❌"
 
-    result = "İÇİLEBİLİR SU 💧" if prediction[0] == 1 else "İÇİLEMEZ SU ❌"
-
-    if prediction[0] == 1:
+        if prediction[0] == 1:
             st.success(f"Tahmin Sonucu: {result}")
         else:
             st.error(f"Tahmin Sonucu: {result}")
