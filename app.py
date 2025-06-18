@@ -1,10 +1,9 @@
-
 import streamlit as st
 import pandas as pd
 import joblib
 import numpy as np
 
-# Dosya yolları (kendi yoluna göre düzenle)
+# Dosya yolları
 MODEL_PATH = "best_catboost_model.pkl"
 SCALER_PATH = "scaler.pkl"
 
@@ -59,7 +58,7 @@ def main():
     st.subheader("Girdiğiniz Özellikler")
     st.write(input_df)
 
-    # Ölçekleme
+    # Ölçekleme ve tahmin işlemi
     input_scaled = scaler.transform(input_df)
 
     if st.button("Tahmin Et"):
