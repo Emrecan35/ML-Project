@@ -2,21 +2,26 @@ import streamlit as st
 import pandas as pd
 import joblib
 import numpy as np
-defaults = joblib.load("impute_defaults.pkl")
+
 # Dosya yolları
 MODEL_PATH = "catboost_model.pkl"
 SCALER_PATH = "scaler.pkl"
+DEFAULTS_PATH = "impute_defaults.pkl"
 
 st.set_page_config(
     page_title="Water Potability Prediction",
     page_icon="💧",
     layout="wide"
 )
+
 @st.cache_resource
 def load_model_and_scaler():
     model = joblib.load(MODEL_PATH)
     scaler = joblib.load(SCALER_PATH)
     return model, scaler
+
+# Varsayılan değerleri yükle
+defaults = joblib.load(DEFAULTS_PATH)
 
 def get_user_input():
     st.sidebar.header("Input Water Quality Features")
@@ -30,9 +35,7 @@ def get_user_input():
     organic_carbon = st.sidebar.slider("Organic Carbon", 0.0, 20.0, 5.0, step=0.1)
     trihalomethanes = st.sidebar.slider("Trihalomethanes", 0.0, 150.0, 40.0, step=0.1)
     turbidity = st.sidebar.slider("Turbidity", 0.0, 15.0, 3.0, step=0.1)
-for col in ["ph", "Sulfate", "Trihalomethanes"]:
-    if input_df[col].isnull().any():
-        input_df[col] = input_df[col].fillna(defaults[col])
+
     data = {
         "ph": ph,
         "Hardness": hardness,
@@ -44,7 +47,12 @@ for col in ["ph", "Sulfate", "Trihalomethanes"]:
         "Trihalomethanes": trihalomethanes,
         "Turbidity": turbidity
     }
+
     input_df = pd.DataFrame([data])
+
+    # Eksik değerleri doldur
+    input_df.fillna(defaults, inplace=True)
+
     return input_df
 
 def main():
@@ -52,23 +60,23 @@ def main():
     st.write("CatBoost model kullanılarak su içilebilirliği tahmini yapılmaktadır.")
 
     model, scaler = load_model_and_scaler()
-
     input_df = get_user_input()
 
     st.subheader("Girdiğiniz Özellikler")
     st.write(input_df)
-   
-    # Ölçekleme ve tahmin işlemi
+
+    # Ölçekleme ve tahmin
     input_scaled = scaler.transform(input_df)
-    
+
     if st.button("Tahmin Et"):
         prediction = model.predict(input_scaled)
+        probability = model.predict_proba(input_scaled)[0][1]
         result = "İÇİLEBİLİR SU 💧" if prediction[0] == 1 else "İÇİLEMEZ SU ❌"
 
         if prediction[0] == 1:
-            st.success(f"Tahmin Sonucu: {result}")
+            st.success(f"Tahmin Sonucu: {result}\n\nGüven: {probability:.2%}")
         else:
-            st.error(f"Tahmin Sonucu: {result}")
+            st.error(f"Tahmin Sonucu: {result}\n\nGüven: {probability:.2%}")
 
 if __name__ == "__main__":
     main()
