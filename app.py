@@ -4,7 +4,7 @@ import joblib
 import numpy as np
 
 # Dosya yolları
-MODEL_PATH = "best_catboost_model.pkl"
+MODEL_PATH = "catboost_model.pkl"
 SCALER_PATH = "scaler.pkl"
 
 st.set_page_config(
