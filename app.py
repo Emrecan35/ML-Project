@@ -30,7 +30,9 @@ def get_user_input():
     organic_carbon = st.sidebar.slider("Organic Carbon", 0.0, 20.0, 5.0, step=0.1)
     trihalomethanes = st.sidebar.slider("Trihalomethanes", 0.0, 150.0, 40.0, step=0.1)
     turbidity = st.sidebar.slider("Turbidity", 0.0, 15.0, 3.0, step=0.1)
-
+for col in ["ph", "Sulfate", "Trihalomethanes"]:
+    if input_df[col].isnull().any():
+        input_df[col] = input_df[col].fillna(defaults[col])
     data = {
         "ph": ph,
         "Hardness": hardness,
