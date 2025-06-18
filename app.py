@@ -45,12 +45,7 @@ def get_user_input():
     }
 
     input_df = pd.DataFrame([data])
-    
-    # Eksik olan özelliği ekliyoruz
-    input_df["Solids*Chloramines"] = input_df["Solids"] * input_df["Chloramines"]
-    
     return input_df
-
 
 def main():
     st.title("💧 Water Potability Prediction App")
