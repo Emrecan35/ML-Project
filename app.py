@@ -3,7 +3,7 @@ import numpy as np
 import joblib
 
 # Load model and scaler
-model = joblib.load("catboost_model.pkl")
+model = joblib.load("best_catboost_model.pkl")
 scaler = joblib.load("scaler.pkl")
 
 st.set_page_config(page_title="Water Potability Prediction", layout="centered")
@@ -12,7 +12,7 @@ st.title("💧 Water Potability Prediction")
 st.write("Enter the following water test results:")
 
 # Input fields for each feature
-ph = st.number_input("ph", 4.0, 10.0, 14.0, step=0.1)
+ph = st.number_input("pH (0–14)", min_value=0.0, max_value=14.0, value=7.0)
 hardness = st.number_input("Hardness", min_value=0.0, value=150.0)
 solids = st.number_input("Solids", min_value=0.0, value=10000.0)
 chloramines = st.number_input("Chloramines", min_value=0.0, value=7.0)
