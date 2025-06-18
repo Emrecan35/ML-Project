@@ -12,7 +12,7 @@ st.title("💧 Water Potability Prediction")
 st.write("Enter the following water test results:")
 
 # Input fields for each feature
-ph = st.number_input("ph", 1.0, 10.0, 14.0, step=0.1)
+ph = st.number_input("ph", 4.0, 10.0, 14.0, step=0.1)
 hardness = st.number_input("Hardness", min_value=0.0, value=150.0)
 solids = st.number_input("Solids", min_value=0.0, value=10000.0)
 chloramines = st.number_input("Chloramines", min_value=0.0, value=7.0)
