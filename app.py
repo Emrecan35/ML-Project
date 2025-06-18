@@ -63,15 +63,6 @@ def main():
 
     if st.button("Tahmin Et"):
         prediction = model.predict(input_scaled)
-        prob = model.predict_proba(input_scaled)[0][1]st.write(f"💡 İçilebilir olasılığı: {prob:.3f}")
-        result = "İÇİLEBİLİR SU 💧" if prediction[0] == 1 else "İÇİLEMEZ SU ❌"
-
-        if prediction[0] == 1:
-            st.success(f"Tahmin Sonucu: {result}")
-        else:
-            st.error(f"Tahmin Sonucu: {result}")
-
-        
         result = "İÇİLEBİLİR SU 💧" if prediction[0] == 1 else "İÇİLEMEZ SU ❌"
 
         if prediction[0] == 1:
