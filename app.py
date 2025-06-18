@@ -1,40 +1,74 @@
 import streamlit as st
-import numpy as np
+import pandas as pd
 import joblib
+import numpy as np
 
-# Load model and scaler
-model = joblib.load("best_catboost_model.pkl")
-scaler = joblib.load("scaler.pkl")
+# Dosya yolları
+MODEL_PATH = "catboost_model.pkl"
+SCALER_PATH = "scaler.pkl"
 
-st.set_page_config(page_title="Water Potability Prediction", layout="centered")
-st.title("💧 Water Potability Prediction")
+st.set_page_config(
+    page_title="Water Potability Prediction",
+    page_icon="💧",
+    layout="wide"
+)
 
-st.write("Enter the following water test results:")
+@st.cache_resource
+def load_model_and_scaler():
+    model = joblib.load(MODEL_PATH)
+    scaler = joblib.load(SCALER_PATH)
+    return model, scaler
 
-# Input fields for each feature
-ph = st.number_input("pH (0–14)", min_value=0.0, max_value=14.0, value=7.0)
-hardness = st.number_input("Hardness", min_value=0.0, value=150.0)
-solids = st.number_input("Solids", min_value=0.0, value=10000.0)
-chloramines = st.number_input("Chloramines", min_value=0.0, value=7.0)
-sulfate = st.number_input("Sulfate", min_value=0.0, value=330.0)
-conductivity = st.number_input("Conductivity", min_value=0.0, value=400.0)
-organic_carbon = st.number_input("Organic Carbon", min_value=0.0, value=10.0)
-trihalomethanes = st.number_input("Trihalomethanes", min_value=0.0, value=60.0)
-turbidity = st.number_input("Turbidity", min_value=0.0, value=3.5)
+def get_user_input():
+    st.sidebar.header("Input Water Quality Features")
 
-# Prepare input
-user_input = np.array([[ph, hardness, solids, chloramines, sulfate,
-                        conductivity, organic_carbon, trihalomethanes, turbidity]])
+    ph = st.sidebar.slider("pH", 0.0, 14.0, 7.0, step=0.1)
+    hardness = st.sidebar.slider("Hardness", 0.0, 500.0, 150.0, step=1.0)
+    solids = st.sidebar.slider("Solids (ppm)", 0.0, 50000.0, 20000.0, step=10.0)
+    chloramines = st.sidebar.slider("Chloramines", 0.0, 20.0, 7.0, step=0.1)
+    sulfate = st.sidebar.slider("Sulfate", 0.0, 500.0, 250.0, step=1.0)
+    conductivity = st.sidebar.slider("Conductivity", 0.0, 1500.0, 300.0, step=1.0)
+    organic_carbon = st.sidebar.slider("Organic Carbon", 0.0, 20.0, 5.0, step=0.1)
+    trihalomethanes = st.sidebar.slider("Trihalomethanes", 0.0, 150.0, 40.0, step=0.1)
+    turbidity = st.sidebar.slider("Turbidity", 0.0, 15.0, 3.0, step=0.1)
 
-# Scale input
-user_input_scaled = scaler.transform(user_input)
+    data = {
+        "ph": ph,
+        "Hardness": hardness,
+        "Solids": solids,
+        "Chloramines": chloramines,
+        "Sulfate": sulfate,
+        "Conductivity": conductivity,
+        "Organic_carbon": organic_carbon,
+        "Trihalomethanes": trihalomethanes,
+        "Turbidity": turbidity
+    }
 
-# Predict button
-if st.button("🔎 Predict Potability"):
-    prediction = model.predict(user_input_scaled)[0]
-    probability = model.predict_proba(user_input_scaled)[0][1]
+    input_df = pd.DataFrame([data])
+    return input_df
 
-    if prediction == 1:
-        st.success(f"✅ This water is likely **POTABLE**.\n\nConfidence: {probability:.2%}")
-    else:
-        st.error(f"⚠️ This water is likely **NOT POTABLE**.\n\nConfidence: {probability:.2%}")
+def main():
+    st.title("💧 Water Potability Prediction App")
+    st.write("CatBoost model kullanılarak su içilebilirliği tahmini yapılmaktadır.")
+
+    model, scaler = load_model_and_scaler()
+
+    input_df = get_user_input()
+
+    st.subheader("Girdiğiniz Özellikler")
+    st.write(input_df)
+
+    # Ölçekleme ve tahmin işlemi
+    input_scaled = scaler.transform(input_df)
+
+    if st.button("Tahmin Et"):
+        prediction = model.predict(input_scaled)
+        result = "İÇİLEBİLİR SU 💧" if prediction[0] == 1 else "İÇİLEMEZ SU ❌"
+
+        if prediction[0] == 1:
+            st.success(f"Tahmin Sonucu: {result}")
+        else:
+            st.error(f"Tahmin Sonucu: {result}")
+
+if __name__ == "__main__":
+    main()
