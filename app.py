@@ -1,30 +1,30 @@
 import streamlit as st
 import pandas as pd
-import joblib
 import numpy as np
+import joblib
 
 # Dosya yolları
 MODEL_PATH = "catboost_model.pkl"
 SCALER_PATH = "scaler.pkl"
-DEFAULTS_PATH = "impute_defaults.pkl"
+IMPUTE_DEFAULTS_PATH = "impute_defaults.pkl"
 
+# Sayfa ayarları
 st.set_page_config(
-    page_title="Water Potability Prediction",
+    page_title="💧 Water Potability Prediction",
     page_icon="💧",
-    layout="wide"
+    layout="centered"
 )
 
+# Model, scaler ve defaults yükle
 @st.cache_resource
 def load_model_and_scaler():
     model = joblib.load(MODEL_PATH)
     scaler = joblib.load(SCALER_PATH)
-    return model, scaler
+    defaults = joblib.load(IMPUTE_DEFAULTS_PATH)
+    return model, scaler, defaults
 
-# Varsayılan değerleri yükle
-defaults = joblib.load(DEFAULTS_PATH)
-
-def get_user_input():
-    st.sidebar.header("Input Water Quality Features")
+def get_user_input(defaults):
+    st.sidebar.title("🔧 Su Kalitesi Girdileri")
 
     ph = st.sidebar.slider("pH", 0.0, 14.0, 7.0, step=0.1)
     hardness = st.sidebar.slider("Hardness", 0.0, 500.0, 150.0, step=1.0)
@@ -49,34 +49,35 @@ def get_user_input():
     }
 
     input_df = pd.DataFrame([data])
-
-    # Eksik değerleri doldur
     input_df.fillna(defaults, inplace=True)
-
     return input_df
 
 def main():
     st.title("💧 Water Potability Prediction App")
-    st.write("CatBoost model kullanılarak su içilebilirliği tahmini yapılmaktadır.")
+    st.markdown("""
+    Bu uygulama, verilen su kalitesi parametrelerine göre **CatBoost** modeli ile suyun içilebilirliğini tahmin eder.
+    
+    Girdileri sol menüden ayarlayabilir, ardından tahmin butonuna basarak sonucu görebilirsiniz.
+    """)
 
-    model, scaler = load_model_and_scaler()
-    input_df = get_user_input()
+    model, scaler, defaults = load_model_and_scaler()
+    input_df = get_user_input(defaults)
 
-    st.subheader("Girdiğiniz Özellikler")
-    st.write(input_df)
+    st.subheader("📥 Girdiğiniz Değerler")
+    st.dataframe(input_df)
 
-    # Ölçekleme ve tahmin
     input_scaled = scaler.transform(input_df)
 
-    if st.button("Tahmin Et"):
-        prediction = model.predict(input_scaled)
+    if st.button("🔍 Tahmin Et"):
+        prediction = model.predict(input_scaled)[0]
         probability = model.predict_proba(input_scaled)[0][1]
-        result = "İÇİLEBİLİR SU 💧" if prediction[0] == 1 else "İÇİLEMEZ SU ❌"
 
-        if prediction[0] == 1:
-            st.success(f"Tahmin Sonucu: {result}\n\nGüven: {probability:.2%}")
+        if prediction == 1:
+            st.success("✅ Tahmin: Bu su **İÇİLEBİLİR**.")
         else:
-            st.error(f"Tahmin Sonucu: {result}\n\nGüven: {probability:.2%}")
+            st.error("❌ Tahmin: Bu su **İÇİLEMEZ**.")
+
+        st.info(f"💡 Güven Oranı: {probability:.1%}")
 
 if __name__ == "__main__":
     main()
