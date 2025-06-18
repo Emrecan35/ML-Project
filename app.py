@@ -57,6 +57,9 @@ def main():
 
     st.subheader("Girdiğiniz Özellikler")
     st.write(input_df)
+    if ph < 6.0 or ph > 8.5:
+    st.warning("⚠️ pH değeri 6.5–8.5 arasında olmalıdır. Bu değer insan sağlığı için önerilmez.")
+
 
     # Ölçekleme ve tahmin işlemi
     input_scaled = scaler.transform(input_df)
