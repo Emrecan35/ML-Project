@@ -18,7 +18,8 @@ st.set_page_config(
 def load_model_and_scaler():
     model = joblib.load(MODEL_PATH)
     scaler = joblib.load(SCALER_PATH)
-    return model, scaler
+    defaults = joblib.load("impute_defaults.pkl")
+    return model, scaler, defaults
 
 # Varsayılan değerleri yükle
 defaults = joblib.load(DEFAULTS_PATH)
