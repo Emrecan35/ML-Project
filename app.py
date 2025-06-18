@@ -12,7 +12,6 @@ st.set_page_config(
     page_icon="💧",
     layout="wide"
 )
-input_df.fillna(defaults, inplace=True)
 @st.cache_resource
 def load_model_and_scaler():
     model = joblib.load(MODEL_PATH)
