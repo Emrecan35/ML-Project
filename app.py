@@ -63,7 +63,7 @@ def main():
 
     if st.button("Tahmin Et"):
         prediction = model.predict(input_scaled)
-        if st.button("Tahmin Et"):
+    if st.button("Tahmin Et"):
     prediction = model.predict(input_scaled)
 
     ...
